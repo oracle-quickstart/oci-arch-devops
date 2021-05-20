@@ -29,6 +29,17 @@ resource "oci_devops_project" "test_project" {
   freeform_tags = var.project_freeform_tags
 }
 
+resource "oci_devops_deploy_environment" "test_environment"{
+  display_name = "test_oke_env"
+  description = "test oke based enviroment"
+  deploy_environment_type = "OKE_CLUSTER"
+  project_id = oci_devops_project.test_project.id
+  cluster_id = oci_containerengine_cluster.oke_cluster[0].id
+
+  // this shoudl nto be required ???
+  region=var.region
+}
+
 data "oci_devops_projects" "test_projects" {
   #Required
   compartment_id = var.compartment_id

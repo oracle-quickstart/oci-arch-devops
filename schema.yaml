@@ -33,7 +33,7 @@ variableGroups:
       and:
         - show_advanced
   variables:
-    - compartment_ocid
+    - compartment_id
     - availability_domain_name 
     - node_shape
     - instance_os
@@ -143,7 +143,7 @@ variables:
     description: "Choose VCN CIDR for your Theia deployment."
 
 # Instance 
-  compartment_ocid:
+  compartment_id:
     type: oci:identity:compartment:id
     required: true
     visible: 
@@ -162,7 +162,7 @@ variables:
     description: "Choose Availability Domain where your Theia will be deployed."
     dependsOn:
       regionName: ${region}
-      compartmentId: ${compartment_ocid}
+      compartmentId: ${compartment_id}
 
   node_shape:
     type: oci:core:instanceshape:name
@@ -174,7 +174,7 @@ variables:
     description: "Choose Instance Shape for Theia host."
     default: "VM.Standard2.1"
     dependsOn:
-      compartmentId: ${compartment_ocid}
+      compartmentId: ${compartment_id}
 
   instance_os:
     type: enum

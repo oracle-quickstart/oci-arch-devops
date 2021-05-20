@@ -1,0 +1,49 @@
+name: 'simple-orm-stack'
+
+on: [push, pull_request]
+env:
+  PROJECT_WORKING_DIR: '/build-orm/'
+
+jobs:
+  terraform_generate_orm_zip:
+    name: 'Generate Stack Package'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: 'Terraform version'
+        run: terraform --version
+
+      - name: 'Terraform Init'
+        run: terraform init
+
+      - name: 'Terraform Validate'
+        run: terraform validate
+
+      - name: 'Build Stack'
+        run: zip -r theia-latest.zip *.tf *.yaml script
+      
+     
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - New ORM Stack template ${{ github.ref }}
+          draft: true
+          prerelease: true
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/theia-latest.zip
+          asset_name: theia-latest.zip
+          asset_content_type: application/zip
