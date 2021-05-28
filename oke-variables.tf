@@ -4,10 +4,7 @@
 
 # OKE Variables
 ## OKE Cluster Details
-variable "app_name" {
-  default     = "DevOps"
-  description = "Application name. Will be used as prefix to identify resources, such as OKE, VCN, ATP, and others"
-}
+
 variable "create_new_oke_cluster" {
   default     = true
   description = "Creates a new OKE cluster, node pool and network resources"

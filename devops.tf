@@ -1,51 +1,107 @@
 resource "oci_logging_log_group" "test_log_group" {
-    compartment_id = var.compartment_id
-    display_name = var.log_group_display_name
+  compartment_id = var.compartment_id
+  display_name   = var.log_group_display_name
 }
 
 resource "oci_ons_notification_topic" "test_notification_topic" {
-    compartment_id = var.compartment_id
-    name = var.notification_topic_name
+  compartment_id = var.compartment_id
+  name           = var.notification_topic_name
 }
 
 resource "oci_devops_project" "test_project" {
   compartment_id = var.compartment_id
-  logging_config {
-    log_group_id             = oci_logging_log_group.test_log_group.id
-    retention_period_in_days = var.project_logging_config_retention_period_in_days
+  # logging_config {
+  #   log_group_id             = oci_logging_log_group.test_log_group.id
+  #   retention_period_in_days = var.project_logging_config_retention_period_in_days
 
-    #Optional
-    display_name_prefix  = var.project_logging_config_display_name_prefix
-    is_archiving_enabled = var.project_logging_config_is_archiving_enabled
-  }
-  name = var.project_name
+  #   #Optional
+  #   display_name_prefix  = var.project_logging_config_display_name_prefix
+  #   is_archiving_enabled = var.project_logging_config_is_archiving_enabled
+  # }
+  name = "${local.app_name_normalized}_${random_string.deploy_id.result}"
   notification_config {
     #Required
     topic_id = oci_ons_notification_topic.test_notification_topic.id
   }
 
   #Optional
-  description   = var.project_description
-  freeform_tags = var.project_freeform_tags
+  description = var.project_description
+  #freeform_tags = var.project_freeform_tags
 }
 
-resource "oci_devops_deploy_environment" "test_environment"{
-  display_name = "test_oke_env"
-  description = "test oke based enviroment"
+resource "oci_devops_deploy_environment" "test_environment" {
+  display_name            = "test_oke_env"
+  description             = "test oke based enviroment"
   deploy_environment_type = "OKE_CLUSTER"
-  project_id = oci_devops_project.test_project.id
-  cluster_id = oci_containerengine_cluster.oke_cluster[0].id
+  project_id              = oci_devops_project.test_project.id
+  cluster_id              = oci_containerengine_cluster.oke_cluster[0].id
 
-  // this shoudl nto be required ???
-  region=var.region
+  // this should not be required ???
+  //region=var.region
 }
 
-data "oci_devops_projects" "test_projects" {
+resource "oci_devops_deploy_artifact" "test_deploy_artifact" {
+  argument_substitution_mode = var.argument_substitution_mode
+  deploy_artifact_type       = var.deploy_artifact_type
+  project_id                 = oci_devops_project.test_project.id
+
+  deploy_artifact_source {
+    deploy_artifact_source_type = var.deploy_artifact_source_type #INLINE,GENERIC_ARTIFACT_OCIR
+    base64encoded_content       = filebase64("${path.module}/manifest/nginx.yaml")
+  }
+
+}
+
+resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
   #Required
-  compartment_id = var.compartment_id
-
+  project_id   = oci_devops_project.test_project.id
+  description  = var.deploy_pipeline_description
+  display_name = var.deploy_pipeline_display_name
   #Optional
-  id    = var.project_id
-  name  = var.project_name
-  state = var.project_state
+  # defined_tags = {"foo-namespace.bar-key"= "value"}
+  # deploy_pipeline_parameters {
+  # 	#Required
+  # 	items {
+  # 		#Required
+  # 		name = var.deploy_pipeline_deploy_pipeline_parameters_items_name
+
+  # 		#Optional
+  # 		default_value = var.deploy_pipeline_deploy_pipeline_parameters_items_default_value
+  # 		description = var.deploy_pipeline_deploy_pipeline_parameters_items_description
+  # 	}
+  # }
+
+  #freeform_tags = {"bar-key"= "value"}
 }
+
+resource "oci_devops_deploy_stage" "test_deploy_stage" {
+  #Required
+  deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
+  deploy_stage_predecessor_collection {
+    #Required
+    items {
+      #Required - firt statge has the predecessor ID as pipeline ID
+      id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
+    }
+  }
+  deploy_stage_type = var.deploy_stage_deploy_stage_type
+
+
+  description  = var.deploy_stage_description
+  display_name = var.deploy_stage_display_name
+
+  kubernetes_manifest_deploy_artifact_ids = [oci_devops_deploy_artifact.test_deploy_artifact.id]
+  namespace                               = var.deploy_stage_namespace
+  oke_cluster_deploy_environment_id       = oci_devops_deploy_environment.test_environment.id
+
+}
+
+# data "oci_devops_projects" "test_projects" {
+#   #Required
+#   compartment_id = var.compartment_id
+
+#   #Optional
+#   //id    = var.project_id
+#   name  = var.project_name
+#   state = var.project_state
+# }

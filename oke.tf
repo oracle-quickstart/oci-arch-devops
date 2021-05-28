@@ -49,7 +49,7 @@ resource "oci_containerengine_node_pool" "oke_node_pool" {
       }
     }
     #size = var.cluster_autoscaler_enabled ? var.cluster_autoscaler_min_nodes : var.num_pool_workers
-    size =  var.num_pool_workers
+    size = var.num_pool_workers
   }
 
   dynamic "node_shape_config" {
@@ -84,7 +84,7 @@ resource "oci_identity_compartment" "oke_compartment" {
 }
 locals {
   #oke_compartment_id = var.create_new_compartment_for_oke ? oci_identity_compartment.oke_compartment.0.id : var.compartment_id
-  oke_compartment_id =  var.compartment_id
+  oke_compartment_id = var.compartment_id
 }
 
 # Local kubeconfig for when using Terraform locally. Not used by Oracle Resource Manager
