@@ -72,7 +72,7 @@ resource "oci_devops_deploy_artifact" "test_deploy_artifact" {
 
   deploy_artifact_source {
     deploy_artifact_source_type = var.deploy_artifact_source_type #INLINE,GENERIC_ARTIFACT_OCIR
-    base64encoded_content       = filebase64("${path.module}/manifest/nginx.yaml")
+    base64encoded_content       = file("${path.module}/manifest/nginx.yaml")
   }
 
 }
