@@ -1,6 +1,31 @@
 resource "oci_logging_log_group" "test_log_group" {
   compartment_id = var.compartment_id
-  display_name   = var.log_group_display_name
+  display_name   = "${local.app_name_normalized}_${random_string.deploy_id.result}_log_group"
+}
+
+resource "oci_logging_log" "test_log" {
+    #Required
+    display_name = "${local.app_name_normalized}_${random_string.deploy_id.result}_log"
+    log_group_id = oci_logging_log_group.test_log_group.id
+    log_type = "SERVICE"
+
+    #Optional
+    configuration {
+        #Required
+        source {
+            #Required
+            category = "all"
+            resource = oci_devops_project.test_project.id
+            service = "devops"
+            source_type = "OCISERVICE"
+        }
+
+        #Optional
+        compartment_id = var.compartment_id
+    }
+    
+    is_enabled = true
+    retention_duration = var.project_logging_config_retention_period_in_days
 }
 
 resource "oci_ons_notification_topic" "test_notification_topic" {
@@ -13,16 +38,14 @@ resource "oci_devops_project" "test_project" {
   # logging_config {
   #   log_group_id             = oci_logging_log_group.test_log_group.id
   #   retention_period_in_days = var.project_logging_config_retention_period_in_days
-
-  #   #Optional
-  #   display_name_prefix  = var.project_logging_config_display_name_prefix
-  #   is_archiving_enabled = var.project_logging_config_is_archiving_enabled
   # }
-  name = "${local.app_name_normalized}_${random_string.deploy_id.result}"
+
+  name   = "${local.app_name_normalized}_${random_string.deploy_id.result}"
   notification_config {
     #Required
     topic_id = oci_ons_notification_topic.test_notification_topic.id
   }
+  #  LOgging config missing- Add that 
 
   #Optional
   description = var.project_description
@@ -39,6 +62,8 @@ resource "oci_devops_deploy_environment" "test_environment" {
   // this should not be required ???
   //region=var.region
 }
+
+#  Add var to choose between an existing Articat and an inline one
 
 resource "oci_devops_deploy_artifact" "test_deploy_artifact" {
   argument_substitution_mode = var.argument_substitution_mode
