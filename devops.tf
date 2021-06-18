@@ -30,7 +30,7 @@ resource "oci_logging_log" "test_log" {
 
 resource "oci_ons_notification_topic" "test_notification_topic" {
   compartment_id = var.compartment_id
-  name           = var.notification_topic_name
+  name           = "${local.app_name_normalized}_${random_string.deploy_id.result}_topic"
 }
 
 resource "oci_devops_project" "test_project" {
