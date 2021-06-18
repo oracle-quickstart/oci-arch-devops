@@ -42,4 +42,3 @@ spec:
   selector: 
     app.kubernetes.io/name: devops-nginx
   type: LoadBalancer
-  ---
