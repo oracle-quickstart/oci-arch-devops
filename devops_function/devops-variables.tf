@@ -15,14 +15,6 @@ variable "create_tenancy_policies" {
   default = true
 }
 
-variable "log_group_display_name" {
-  default = "devops-logs"
-}
-
-variable "notification_topic_name" {
-  default = "devops-topic"
-}
-
 variable "deploy_pipeline_deploy_pipeline_parameters_items_default_value" {
   default = "defaultValue"
 }
@@ -37,13 +29,6 @@ variable "deploy_pipeline_deploy_pipeline_parameters_items_name" {
 
 variable "project_description" {
   default = "description"
-}
-
-variable "environment_display_name" {
-  default = "DevOps Function Environment"
-}
-variable "environment_description" {
-  default = "Function environment that can be targeted by devops"
 }
 variable "environment_type" {
   default = "FUNCTION"
@@ -66,24 +51,12 @@ variable "deploy_artifact_source_type" {
   default = "INLINE"
 }
 
-#variable "deploy_artifact_type" {
-#  default = "KUBERNETES_MANIFEST"
-#}
-
 variable "argument_substitution_mode" {
   default = "NONE"
 }
 
 variable "create_dynamic_group_for_devops_pipln_in_compartment" {
   default = true
-}
-
-variable "deploy_pipeline_display_name" {
-  default = "devops-fn-pipeline"
-}
-
-variable "deploy_pipeline_description" {
-  default = "Devops Pipleline demo for Function"
 }
 
 variable "deploy_stage_deploy_stage_type" {
@@ -94,10 +67,3 @@ variable "deploy_stage_namespace" {
   default = "default"
 }
 
-variable "deploy_stage_display_name" {
-  default = "Deploy Function Stage"
-}
-
-variable "deploy_stage_description" {
-  default = "test deployment to Function"
-}

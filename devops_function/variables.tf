@@ -17,6 +17,10 @@ variable "app_version" {
   default = "0.0.1"
 }
 
+variable "app_version2" {
+  default = "0.0.2"
+}
+
 # ORM Schema visual control variables
 variable "show_advanced" {
   default = false
