@@ -91,7 +91,7 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
 }
 
 resource "oci_devops_deployment" "test_deployment" {
-  depends_on         = [null_resource.FnPush2OCIR2]
+  depends_on         = [null_resource.FnPush2OCIR2, oci_devops_deploy_stage.test_deploy_stage]
   deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
   deployment_type    = "PIPELINE_DEPLOYMENT"
   display_name       = "${var.app_name}_${random_string.deploy_id.result}_devops_deployment"
