@@ -44,7 +44,9 @@ Now, you'll want a local copy of this repo. You can make that with the commands:
 ### Prerequisites
 First off, you'll need to do some pre-deploy setup.  That's all detailed [here](https://github.com/cloud-partners/oci-prerequisites).
 
-Secondly, create a `terraform.tfvars` file and populate with the following information:
+Secondly, a sample `terraform.tfvars` file is provided in the repo. Please update the file with your tenancy details.
+
+Alternatively, you can create a `terraform.tfvars` file and populate with the following information as well as any additional information for your deployment:
 
 ```
 # Authentication
