@@ -35,7 +35,7 @@ variable "environment_type" {
 }
 
 variable "project_logging_config_display_name_prefix" {
-  default = "demo-"
+  default = "fn-"
 }
 
 variable "project_logging_config_is_archiving_enabled" {
@@ -48,7 +48,11 @@ variable "project_logging_config_retention_period_in_days" {
 
 
 variable "deploy_artifact_source_type" {
-  default = "INLINE"
+  default = "OCIR"
+}
+
+variable "deploy_artifact_type" {
+  default = "DOCKER_IMAGE"
 }
 
 variable "argument_substitution_mode" {
