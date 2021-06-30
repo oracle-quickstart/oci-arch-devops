@@ -5,8 +5,8 @@
 Now, you'll want a local copy of this repo. You can make that with the commands:
 
 ```
-    git clone https://github.com/jeevanjoseph/devops-reference-arch-oke.git
-    cd devops-reference-arch-oke
+    git clone https://github.com/oracle-quickstart/oci-arch-devops.git
+    cd oci-arch-devops/devops_oke
     ls
 ```
 
