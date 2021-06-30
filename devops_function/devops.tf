@@ -91,6 +91,7 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
 }
 
 resource "oci_devops_deployment" "test_deployment" {
+  count              = var.update_function_with_new_image ? 1 : 0
   depends_on         = [null_resource.FnPush2OCIR2, oci_devops_deploy_stage.test_deploy_stage]
   deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
   deployment_type    = "PIPELINE_DEPLOYMENT"

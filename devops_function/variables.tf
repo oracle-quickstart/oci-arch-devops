@@ -13,6 +13,10 @@ variable "app_name" {
   description = "Application name. Will be used as prefix to identify resources, such as Function, VCN, DevOps, and others"
 }
 
+variable "update_function_with_new_image" {
+  default = false
+}
+
 variable "app_version" {
   default = "0.0.1"
 }

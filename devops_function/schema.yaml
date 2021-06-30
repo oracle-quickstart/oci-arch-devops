@@ -21,57 +21,62 @@ variableGroups:
   - app_version
   - app_version2
 
+- title: Required Configuration
+  visible: true  
+  variables:
+  - app_name
+  - ocir_user_name
+  - ocir_user_password
+  - update_function_with_new_image
+  - show_advanced
+
 - title: DevOps Project
   visible: true  
   variables:
-    - compartment_id
-    - app_name
-    - project_logging_config_display_name_prefix
-    - project_logging_config_retention_period_in_days
-    - show_advanced
+  - compartment_id
+  - project_logging_config_display_name_prefix
+  - project_logging_config_retention_period_in_days
 
-- title: Function Configuration 
+- title: Function & Network Configuration 
   visible: true  
   variables:
-    - VCN-CIDR
-    - fnsubnet-CIDR
-    - ocir_repo_name
-    - ocir_user_name
-    - ocir_user_password
+  - VCN-CIDR
+  - fnsubnet-CIDR
+  - ocir_repo_name
 
 - title: DevOps Environments
   visible: 
       and:
         - show_advanced
   variables:
-    - environment_type 
+  - environment_type 
 
 - title: DevOps Artifacts
   visible: 
       and:
         - show_advanced
   variables:
-    - deploy_artifact_source_type
-    - deploy_artifact_type
-    - argument_substitution_mode
+  - deploy_artifact_source_type
+  - deploy_artifact_type
+  - argument_substitution_mode
 
 - title: Pipelines & Stages
   visible: 
       and:
         - show_advanced  
   variables:
-    - deploy_stage_deploy_stage_type
-    - deploy_stage_namespace
+  - deploy_stage_deploy_stage_type
+  - deploy_stage_namespace
 
 - title: Policy Settings
   description: Policy setting for the stack deployment
   visible: true  
   variables:
-    - create_dynamic_group_for_devops_pipln_in_compartment
-    - create_dynamic_group_for_nodes_in_compartment
-    - existent_dynamic_group_for_nodes_in_compartment
-    - create_compartment_policies
-    - create_tenancy_policies
+  - create_dynamic_group_for_devops_pipln_in_compartment
+  - create_dynamic_group_for_nodes_in_compartment
+  - existent_dynamic_group_for_nodes_in_compartment
+  - create_compartment_policies
+  - create_tenancy_policies
     
 
 ######################
@@ -95,6 +100,13 @@ variables:
     type: boolean
     title: "Show advanced options?"
     description: "Shows advanced options, allowing enable customer-managed encryption keys, select your ssh key, select/unselect cluster utilities, do not create policies, and other advanced options"
+    visible: true
+    default: false
+
+  update_function_with_new_image:
+    type: boolean
+    title: "Update Function with new image?"
+    description: "Decide if DevOps Service should automatically update Function image (0.0.1) with new image from OCIR (0.0.2)."
     visible: true
     default: false
 
