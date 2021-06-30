@@ -2,8 +2,7 @@
 
 Rapid delivery of software is essential for efficiently running your applications in the cloud. Oracle DevOps service provides an end-to-end continuous deployment experience to developers. Oracle DevOps service includes deploying pipelines to automate your continuous software deployment process (CD) to Oracle Cloud Infrastructure (OCI) platforms: Container Engine for Kubernetes (OKE), Functions, and Compute instances.
 
-For details of the architecture, see [_Build a Continuous Deployment Pipeline using Oracle Cloud Infrastructure DevOps service
-_](https://docs.oracle.com/en/solutions/build-pipeline-using-devops/index.html)
+For details of the architecture, see [_Build a Continuous Deployment Pipeline using Oracle Cloud Infrastructure DevOps service_](https://docs.oracle.com/en/solutions/build-pipeline-using-devops/index.html)
 
 ## Prerequisites
 
@@ -52,6 +51,10 @@ Run the following commands:
     terraform plan
     terraform apply
 
+Note:
+    In order to test the deployment, grab the public ip of the compute instance and paste it on the browser to see the application running.
+
+
 ### Destroy the Deployment
 When you no longer need the deployment, you can run this command to destroy the resources:
 
@@ -59,4 +62,4 @@ When you no longer need the deployment, you can run this command to destroy the 
 
 ## Architecture Diagram
 
-![](./images/oci-arch-devops.png)
+![](./images/dev-ops-deployment-pipeline.png)
