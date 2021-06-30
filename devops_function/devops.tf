@@ -32,36 +32,36 @@ resource "oci_ons_notification_topic" "test_notification_topic" {
 
 resource "oci_devops_project" "test_project" {
   compartment_id = var.compartment_ocid
-
-  name = "${var.app_name}_${random_string.deploy_id.result}"
+  name           = "${var.app_name}_${random_string.deploy_id.result}_devops_project"
   notification_config {
     topic_id = oci_ons_notification_topic.test_notification_topic.id
   }
-  description = var.project_description
+  description = "${var.app_name}_${random_string.deploy_id.result}_devops_project"
 }
 
 resource "oci_devops_deploy_environment" "test_environment" {
-  display_name            = "test_fn_env"
-  description             = "test fn based enviroment"
+  display_name            = "${var.app_name}_${random_string.deploy_id.result}_devops_environment"
+  description             = "${var.app_name}_${random_string.deploy_id.result}_devops_environment"
   deploy_environment_type = "FUNCTION"
   project_id              = oci_devops_project.test_project.id
   function_id             = oci_functions_function.test_fn.id
 }
 
 resource "oci_devops_deploy_artifact" "test_deploy_ocir_artifact" {
+  depends_on                 = [null_resource.FnPush2OCIR2]
   project_id                 = oci_devops_project.test_project.id
-  deploy_artifact_type       = "DOCKER_IMAGE"
-  argument_substitution_mode = "NONE"
+  deploy_artifact_type       = var.deploy_artifact_type
+  argument_substitution_mode = var.argument_substitution_mode
   deploy_artifact_source {
-    deploy_artifact_source_type = "OCIR"
-    image_uri                   = "${local.ocir_docker_repository}/${local.ocir_namespace}/${var.ocir_repo_name}/${local.app_name_lower}:${var.app_version}"
+    deploy_artifact_source_type = var.deploy_artifact_source_type
+    image_uri                   = "${local.ocir_docker_repository}/${local.ocir_namespace}/${var.ocir_repo_name}/${local.app_name_lower}:${var.app_version2}"
   }
 }
 
 resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
   project_id   = oci_devops_project.test_project.id
-  description  = var.deploy_pipeline_description
-  display_name = var.deploy_pipeline_display_name
+  description  = "${var.app_name}_${random_string.deploy_id.result}_devops_pipeline"
+  display_name = "${var.app_name}_${random_string.deploy_id.result}_devops_pipeline"
 
   deploy_pipeline_parameters {
     items {
@@ -70,8 +70,6 @@ resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
       description   = var.deploy_pipeline_deploy_pipeline_parameters_items_description
     }
   }
-
-  #freeform_tags = {"bar-key"= "value"}
 }
 
 resource "oci_devops_deploy_stage" "test_deploy_stage" {
@@ -84,10 +82,18 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
   deploy_stage_type = var.deploy_stage_deploy_stage_type
 
 
-  description  = var.deploy_stage_description
-  display_name = var.deploy_stage_display_name
+  description  = "${var.app_name}_${random_string.deploy_id.result}_devops_deploy_stage"
+  display_name = "${var.app_name}_${random_string.deploy_id.result}_devops_deploy_stage"
 
   namespace                       = var.deploy_stage_namespace
   function_deploy_environment_id  = oci_devops_deploy_environment.test_environment.id
   docker_image_deploy_artifact_id = oci_devops_deploy_artifact.test_deploy_ocir_artifact.id
+}
+
+resource "oci_devops_deployment" "test_deployment" {
+  count              = var.update_function_with_new_image ? 1 : 0
+  depends_on         = [null_resource.FnPush2OCIR2, oci_devops_deploy_stage.test_deploy_stage]
+  deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
+  deployment_type    = "PIPELINE_DEPLOYMENT"
+  display_name       = "${var.app_name}_${random_string.deploy_id.result}_devops_deployment"
 }

@@ -38,3 +38,27 @@ resource "null_resource" "FnPush2OCIR" {
 
 }
 
+resource "null_resource" "FnPush2OCIR2" {
+  depends_on = [null_resource.Login2OCIR, null_resource.FnPush2OCIR, oci_functions_function.test_fn]
+
+  provisioner "local-exec" {
+    command     = "image=$(docker images | grep ${local.app_name_lower} | awk -F ' ' '{print $3}') ; docker rmi -f $image &> /dev/null ; echo $image"
+    working_dir = "functions/${local.app_name_lower}2"
+  }
+
+  provisioner "local-exec" {
+    command     = "fn build --verbose"
+    working_dir = "functions/${local.app_name_lower}2"
+  }
+
+  provisioner "local-exec" {
+    command     = "image=$(docker images | grep ${local.app_name_lower} | awk -F ' ' '{print $3}') ; docker tag $image ${local.ocir_docker_repository}/${local.ocir_namespace}/${var.ocir_repo_name}/${local.app_name_lower}:${var.app_version2}"
+    working_dir = "functions/${local.app_name_lower}2"
+  }
+
+  provisioner "local-exec" {
+    command     = "docker push ${local.ocir_docker_repository}/${local.ocir_namespace}/${var.ocir_repo_name}/${local.app_name_lower}:${var.app_version2}"
+    working_dir = "functions/${local.app_name_lower}2"
+  }
+
+}

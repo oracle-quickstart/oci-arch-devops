@@ -4,10 +4,10 @@ schemaVersion: 1.1.0
 version: "20190304"
 locale: "en"
 
-
 #################
 # Variable Groups
 #################
+
 variableGroups:
 - title: General Configuration
   visible: false
@@ -18,125 +18,66 @@ variableGroups:
   - fingerprint
   - private_key_path
   - network_cidrs
+  - app_version
+  - app_version2
+
+- title: Required Configuration
+  visible: true  
+  variables:
+  - app_name
+  - ocir_user_name
+  - ocir_user_password
+  - update_function_with_new_image
+  - show_advanced
 
 - title: DevOps Project
   visible: true  
   variables:
-    - compartment_id
-    - app_name
-    - show_advanced
-    - log_group_display_name
-    - notification_topic_name
-    - project_description
-    - project_logging_config_display_name_prefix
-    - project_logging_config_is_archiving_enabled
-    - project_logging_config_retention_period_in_days
+  - compartment_id
+  - project_logging_config_display_name_prefix
+  - project_logging_config_retention_period_in_days
+
+- title: Function & Network Configuration 
+  visible: true  
+  variables:
+  - VCN-CIDR
+  - fnsubnet-CIDR
+  - ocir_repo_name
 
 - title: DevOps Environments
   visible: 
       and:
         - show_advanced
   variables:
-    - environment_type 
-    - environment_description 
-    - environment_display_name
+  - environment_type 
 
 - title: DevOps Artifacts
   visible: 
       and:
         - show_advanced
   variables:
-    - deploy_artifact_source_type
-    - deploy_artifact_type
-    - argument_substitution_mode
-
+  - deploy_artifact_source_type
+  - deploy_artifact_type
+  - argument_substitution_mode
 
 - title: Pipelines & Stages
   visible: 
       and:
         - show_advanced  
   variables:
-    - deploy_pipeline_display_name
-    - deploy_pipeline_description
-    - deploy_stage_deploy_stage_type
-    - deploy_stage_namespace
-    - deploy_stage_display_name
-    - deploy_stage_description
+  - deploy_stage_deploy_stage_type
+  - deploy_stage_namespace
 
 - title: Policy Settings
   description: Policy setting for the stack deployment
   visible: true  
   variables:
-    - create_dynamic_group_for_devops_pipln_in_compartment
-    - create_dynamic_group_for_nodes_in_compartment
-    - existent_dynamic_group_for_nodes_in_compartment
-    - create_compartment_policies
-    - create_tenancy_policies
+  - create_dynamic_group_for_devops_pipln_in_compartment
+  - create_dynamic_group_for_nodes_in_compartment
+  - existent_dynamic_group_for_nodes_in_compartment
+  - create_compartment_policies
+  - create_tenancy_policies
     
-- title: Encryption Settings
-  description: Policy setting for the stack deployment
-  visible: true  
-  variables:
-    - use_encryption_from_oci_vault
-    - create_new_encryption_key
-    - existent_encryption_key_id
-    - create_vault_policies_for_group
-    - user_admin_group_for_vault_policy
-
-    
-
-- title: "OKE Cluster Configuration"
-  variables:
-    - create_new_oke_cluster
-    - existent_oke_cluster_compartment_ocid
-    - existent_oke_cluster_id
-    - k8s_version
-    - cluster_workers_visibility
-    - cluster_endpoint_visibility
-    - create_new_compartment_for_oke
-    - cluster_options_add_ons_is_kubernetes_dashboard_enabled
-
-- title: "OKE Worker Nodes"
-  variables:
-    - cluster_autoscaler_enabled
-    - num_pool_workers
-    - cluster_autoscaler_min_nodes
-    - cluster_autoscaler_max_nodes
-    - existent_oke_nodepool_id_for_autoscaler
-    - node_pool_shape
-    - node_pool_node_shape_config_ocpus
-    - node_pool_node_shape_config_memory_in_gbs
-    - generate_public_ssh_key
-    - public_ssh_key
-    - image_operating_system
-    - image_operating_system_version
-    - node_pool_name
-
-
-#################
-# Output Groups
-#################
-outputGroups:
-- title: Service Endpoints
-  outputs:
-    - theia_public_ip
-- title: Generated Passwords
-  outputs:
-    - generated_ssh_private_key
-
-outputs:
-  theia_public_ip:
-    type: link
-    title: Your Theia website
-    description: Open Theia website
-  generated_ssh_private_key:
-    title: "Generated SSH Private Key"
-    description: "Generated SSH Private Key"
-    type: copyableString
-    visible: true
-
-primaryOutputButton: theia_public_ip
-
 
 ######################
 # Variable Definitions
@@ -152,7 +93,7 @@ variables:
 
   app_name:
     type: string
-    title: "Project Name"
+    title: "HelloWorldFn"
     required: true
 
   show_advanced:
@@ -162,64 +103,70 @@ variables:
     visible: true
     default: false
 
+  update_function_with_new_image:
+    type: boolean
+    title: "Update Function with new image?"
+    description: "Decide if DevOps Service should automatically update Function image (0.0.1) with new image from OCIR (0.0.2)."
+    visible: true
+    default: false
+
+## Function
+
+  VCN-CIDR:
+    type: string
+    required: false
+    default: "10.0.0.0/16"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    description: "VCN CIDR block where you want to create the App/Function resources."
+  
+  fnsubnet-CIDR:
+    type: string
+    required: false
+    default: "10.0.1.0/24"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    description: "Subnet CIDR block where you want to create the App/Function resources."
+  
+  ocir_repo_name:
+    type: string
+    required: true
+    visibile: true
+    title: "OCIR repository name"
+    description: "Oracle Cloud Infrastructure Registry repository name (for example functions)"
+  
+  ocir_user_name:
+    type: string
+    required: true
+    visibile: true
+    title: "OCIR username"
+    description: "Oracle Cloud Infrastructure Registry username (your OCI username)" 
+
+  ocir_user_password:
+    type: password
+    required: true
+    visibile: true
+    title: "OCIR user password"
+    description: "Oracle Cloud Infrastructure Registry user password (your OCI user authtoken)" 
+
+
 ## DevOps
-
-  log_group_display_name:
-    type: string
-    title: "Log Group Name"
-    description: "Display name for the Log Group"
-    default: "devops-logs"
-    required: true
-    visible: 
-      and:
-        - show_advanced
-
-  notification_topic_name:
-    type: string
-    title: "Notification Topic Name"
-    description: "Name of the notification topic used for messages about the project"
-    default: "devops-topic"
-    required: true
-    visible: 
-      and:
-        - show_advanced
-
-
-  project_description:
-    type: string
-    title: "DevOps Project Description"
-    description: "A short description for the DevOps project"
-    default: "Quick DevOps Project"
-    required: true
-    visible: 
-      and:
-        - show_advanced
-
 
   project_logging_config_display_name_prefix:
     type: string
     title: "Prefix for Logging Config"
     description: "Display name for the Log Group"
-    default: "demo-"
-    required: true
-    visible: 
-      and:
-        - show_advanced
-
-  project_logging_config_is_archiving_enabled:
-    type: boolean
-    title: "Archiving enabled for Project Logging "
-    description: "Display name for the Log Group"
-    default: false
+    default: "fn-"
     required: true
     visible: 
       and:
         - show_advanced
 
   project_logging_config_retention_period_in_days:
-    type: string
+    type: number
     title: "Project Logs retention period"
     description: "Days to retain logs from the Project."
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
     default: 30
     required: true
     visible: 
@@ -233,26 +180,13 @@ variables:
   environment_type:
     type: enum
     enum:
-      - "OKE_CLUSTER"
+      - "FUNCTION"
     title: "Environment Type"
-    description: "The type of environment to target. Stack currently supports only OKE_CLUSTER"
-    default: "OKE_CLUSTER"
+    description: "The type of environment to target. Stack currently supports only FUNCTION"
+    default: "FUNCTION"
     visible: 
       and:
         - show_advanced
-  environment_description:
-    type: string
-    title: "Environment Description"
-    description: "Describe the DevOps Environment"
-    default: "OKE environment that can be targeted by devops"
-    visible: 
-      and:
-        - show_advanced
-  environment_display_name:
-    type: string
-    title: "Environment Name"
-    description: "Name for the DevOps Environment"
-    default: "DevOps OKE Environment"
 
   ############
   # Artifacts
@@ -260,18 +194,18 @@ variables:
   deploy_artifact_source_type:
     type: enum
     enum:
-      - "INLINE"
+      - "OCIR"
     title: "Artifact Source Type"
-    description: "The source type of artifact. Stack currently supports only INLINE"
-    default: "INLINE"
+    description: "The source type of artifact. Stack currently supports only OCIR"
+    default: "OCIR"
 
   deploy_artifact_type:
     type: enum
     enum:
-      - "KUBERNETES_MANIFEST"
+      - "DOCKER_IMAGE"
     title: "Artifact Type"
-    description: "The type of Artifact. Stack currently supports only KUBERNETES_MANIFEST"
-    default: "KUBERNETES_MANIFEST"
+    description: "The type of Artifact. Stack currently supports only DOCKER_IMAGE"
+    default: "DOCKER_IMAGE"
 
   argument_substitution_mode:
     type: enum
@@ -287,240 +221,22 @@ variables:
   create_dynamic_group_for_devops_pipln_in_compartment:
     type: boolean
     title: "Create a Dynamic Group for DevOps Pipelines"
-    description: | 
-      You need to be an administrator to do this.
-
-      Alternatively you can have the administrator create Dynamic group for you. 
+    description: "You need to be an administrator to do this. Alternatively you can have the administrator create Dynamic group for you." 
     default: true
-
-  deploy_pipeline_display_name:
-    type: string
-    title: "Pipleline Name"
-    description: "Display name for the Pipleline"
-    default: "devops-oke-pipeline"
-
-  deploy_pipeline_description:
-    type: string
-    title: "Pipeline Description"
-    description: "Description for the Pipeline"
-    default: "Devops Pipleline demo for OKE"
 
   deploy_stage_deploy_stage_type:
     type: enum
     enum:
-      - "OKE_DEPLOYMENT"
-    title: "Stage type"
-    description: "Display name for the Log Group"
-    default: "OKE_DEPLOYMENT"
+      - "DEPLOY_FUNCTION"
+    title: "Stage Type"
+    description: "DevOps Stage Type"
+    default: "DEPLOY_FUNCTION"
 
   deploy_stage_namespace:
     type: string
-    title: "Kubernetes Namespace to use"
-    description: "Kubernetes namespace to use for deployment."
+    title: "Namespace to use"
+    description: "namespace to use for deployment."
     default: "default"
-
-  deploy_stage_display_name:
-    type: string
-    title: "Stage Name"
-    description: "Name for the deployment stage."
-    default: "deploy_OKE"
-
-  deploy_stage_description:
-    type: string
-    title: "Stage Description"
-    description: "Description for the deployment stage"
-    default: "test deployment to OKE"
-    
-  ####################  
-  ## OKE 
-  ####################
-
-  create_new_oke_cluster:
-    type: boolean
-    title: "Create new OKE Cluster"
-
-  existent_oke_cluster_compartment_ocid:
-    type: oci:identity:compartment:id
-    title: "Existent OKE Cluster Compartment"
-    description: "The compartment where you find the existent OKE Cluster"
-    default: compartment_ocid
-    required: true
-    visible:
-      not:
-        - create_new_oke_cluster
-
-  existent_oke_cluster_id:
-    type: oci:container:cluster:id
-    title: "Existent OKE Cluster"
-    required: true
-    dependsOn:
-      compartmentId: existent_oke_cluster_compartment_ocid
-    visible:
-      not:
-        - create_new_oke_cluster
-
-  k8s_version:
-    type: enum
-    enum: # Necessary hardcoded supported versions, as ORM does not retrieve the versions from OKE.
-    - "Latest"
-    - "v1.19.7"
-    - "v1.18.10"
-    - "v1.17.13"
-    - "v1.16.15"
-    title: "Kubernetes Version"
-    required: true
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-
-  cluster_workers_visibility:
-    type: enum
-    enum:
-    - "Private"
-    - "Public"
-    title: "Choose Worker Nodes visibility type"
-    required: true
-    visible:
-      and:
-        - create_new_oke_cluster
-
-  cluster_endpoint_visibility:
-    type: enum
-    enum:
-    # - "Private"
-    - "Public"
-    title: "Choose Kubernetes API Endpoint visibility type"
-    required: true
-    visible:
-      and:
-        - create_new_oke_cluster
-
-  create_new_compartment_for_oke:
-    type: boolean
-    title: "Create new Compartment"
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-
-  num_pool_workers:
-    type: integer
-    title: "Number of Worker Nodes"
-    minimum: 1
-    maximum: 1000
-    required: true
-    visible:
-      and:
-        - create_new_oke_cluster
-
-  node_pool_shape:
-    type: oci:core:instanceshape:name
-    title: "Select a shape for the Worker Nodes instances"
-    required: true
-    dependsOn:
-      compartmentId: compartment_ocid
-    visible:
-      and:
-        - create_new_oke_cluster
-
-  node_pool_node_shape_config_ocpus:
-    type: integer
-    minimum: 1
-    maximum: 64
-    title: "Number of OCPUs"
-    visible:
-      and:
-        - and:
-          - create_new_oke_cluster
-        - or:
-          - eq:
-            - node_pool_shape 
-            - "VM.Standard.E3.Flex"
-          - eq:
-            - node_pool_shape 
-            - "VM.Standard.E4.Flex"
-          - eq:
-            - node_pool_shape 
-            - "VM.Standard.A1.Flex"
-
-  node_pool_node_shape_config_memory_in_gbs:
-    type: integer
-    minimum: 1
-    maximum: 1024
-    title: "Amount of memory (GB)"
-    visible:
-      and:
-        - and:
-          - create_new_oke_cluster
-        - or:
-          - eq:
-            - node_pool_shape 
-            - "VM.Standard.E3.Flex"
-          - eq:
-            - node_pool_shape 
-            - "VM.Standard.E4.Flex"
-          - eq:
-            - node_pool_shape 
-            - "VM.Standard.A1.Flex"
-
-  node_pool_name:
-    type: string
-    title: "Node Pool Name"
-    required: true
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-
-  cluster_options_add_ons_is_kubernetes_dashboard_enabled:
-    type: boolean
-    title: "Kubernetes Dashboard Enabled"
-    visible: false
-
-  generate_public_ssh_key:
-    type: boolean
-    title: "Auto generate public ssh key?"
-    required: true
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-
-  public_ssh_key:
-    type: oci:core:ssh:publickey
-    title: "Import your own SSH public key"
-    additionalProps:
-      allowMultiple: true
-    required: false
-    pattern: "((^(ssh-rsa AAAAB3NzaC1yc2|ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNT|ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzOD|ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1Mj|ssh-ed25519 AAAAC3NzaC1lZDI1NTE5|ssh-dss AAAAB3NzaC1kc3)[0-9A-Za-z+\/]+[=]{0,3})( [^,]*)?)(,((ssh-rsa AAAAB3NzaC1yc2|ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNT|ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzOD|ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1Mj|ssh-ed25519 AAAAC3NzaC1lZDI1NTE5|ssh-dss AAAAB3NzaC1kc3)[0-9A-Za-z+\/]+[=]{0,3})( [^,]*)?)*$"
-    visible:
-      and:
-        - and:
-          - create_new_oke_cluster
-          - show_advanced
-        - not:
-          - generate_public_ssh_key
-
-  image_operating_system:
-    type: enum
-    title: "Image OS"
-    enum:
-      - "Oracle Linux"
-    required: true
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-
-  image_operating_system_version:
-    type: string
-    required: true
-    title: "Image OS Version"
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
   
   create_dynamic_group_for_nodes_in_compartment:
     type: boolean
@@ -561,56 +277,4 @@ variables:
         - show_advanced
   
   
-  # Encryption options
-  use_encryption_from_oci_vault:
-    type: boolean
-    title: "Encrypt using Customer-Managed Keys instead of Oracle Managed Encryption"
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-
-  create_new_encryption_key:
-    type: boolean
-    title: "Create new Vault and Key"
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-        - use_encryption_from_oci_vault
-
-  existent_encryption_key_id:
-    type: string
-    title: "Existent Encryption Key OCID"
-    required: true
-    visible:
-      and:
-        - and:
-          - create_new_oke_cluster
-          - show_advanced
-          - use_encryption_from_oci_vault
-        - not:
-          - create_new_encryption_key
-
-  create_vault_policies_for_group:
-    type: boolean
-    title: "Create policies for the user group to manage vault and keys"
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-        - use_encryption_from_oci_vault
-        - create_new_encryption_key
-
-  user_admin_group_for_vault_policy:
-    type: string
-    title: "Specify your group to include the policy"
-    visible:
-      and:
-        - create_new_oke_cluster
-        - show_advanced
-        - use_encryption_from_oci_vault
-        - create_new_encryption_key
-        - create_vault_policies_for_group
-
-
+ 

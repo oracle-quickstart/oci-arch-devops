@@ -1,0 +1,14 @@
+# Authentication
+tenancy_ocid         = "ocid1.tenancy.oc1.."
+user_ocid            = "ocid1.user.oc1.."
+fingerprint          = "1c.."
+private_key_path     = "~/.oci/oci_api_key.pem"
+
+# SSH Keys
+ssh_public_key  = "~/.oci/key.pub"
+
+# Region
+region = "us-ashburn-1"
+
+# Compartment
+compartment_ocid = "ocid1.compartment.oc1."
