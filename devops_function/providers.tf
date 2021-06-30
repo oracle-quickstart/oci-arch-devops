@@ -5,10 +5,10 @@
 terraform {
   required_version = ">= 0.14"
   required_providers {
-    #    oci = {
-    #      source  = "hashicorp/oci"
-    #      version = "99.0.3"
-    #    }
+        oci = {
+          source  = "hashicorp/oci"
+          version = "4.33.0"
+        }
     tls = {
       source  = "hashicorp/tls"
       version = "2.0.1" # Latest version as March 2021 = 3.1.0. Using 2.0.1 (April, 2020) for ORM compatibility
