@@ -24,6 +24,7 @@ variableGroups:
   - deploy_pipeline_deploy_pipeline_parameters_items_description
   - deploy_pipeline_deploy_pipeline_parameters_items_name
   - compartment_ocid
+  - release
 
 - title: Required Configuration
   visible: true  
