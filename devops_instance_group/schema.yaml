@@ -1,0 +1,278 @@
+title: "Use OCI DevOps with Instance Group"
+description: "Create Function and DevOps Deploy service to manage your Instance Group deployments."
+schemaVersion: 1.1.0
+version: "20190304"
+locale: "en"
+
+#################
+# Variable Groups
+#################
+
+variableGroups:
+- title: General Configuration
+  visible: false
+  variables:
+  - tenancy_ocid
+  - region
+  - user_ocid
+  - fingerprint
+  - private_key_path
+  - network_cidrs
+  - app_version
+  - app_version2
+  - deploy_pipeline_deploy_pipeline_parameters_items_default_value
+  - deploy_pipeline_deploy_pipeline_parameters_items_description
+  - deploy_pipeline_deploy_pipeline_parameters_items_name
+  - create_dynamic_group_for_devops_pipln_in_compartment
+  - compartment_ocid
+  - release
+
+- title: Required Configuration
+  visible: true  
+  variables:
+  - compartment_ocid
+  - availablity_domain_name
+  - show_advanced
+
+- title: DevOps Project
+  visible: true  
+  variables:
+  - project_description
+  - project_logging_config_retention_period_in_days
+
+- title: Network Configuration 
+  visible: true  
+  variables:
+  - VCN-CIDR
+  - Subnet-CIDR
+
+- title: DevOps Environments
+  visible: 
+      and:
+        - show_advanced
+  variables:
+  - environment_type
+  - ssh_public_key
+  - instance_shape
+  - instance_ocpus
+  - instance_shape_config_memory_in_gbs
+  - instance_os
+  - linux_os_version 
+
+- title: DevOps Artifacts
+  visible: 
+      and:
+        - show_advanced
+  variables:
+  - filename
+  - argument_substitution_mode
+
+- title: Pipelines & Stages
+  visible: 
+      and:
+        - show_advanced  
+  variables:
+  - deploy_stage_deploy_stage_type
+  - deploy_stage_namespace
+
+    
+######################
+# Variable Definitions
+######################
+
+variables:
+
+  compartment_ocid: 
+    type: oci:identity:compartment:id
+    title: "Compartment"
+    description: "The compartment in which to create resources"
+    required: true
+
+  show_advanced:
+    type: boolean
+    title: "Show advanced options?"
+    description: "Shows advanced options, allowing enable customer-managed encryption keys, select your ssh key, select/unselect cluster utilities, do not create policies, and other advanced options"
+    visible: true
+    default: false
+
+## Function
+
+  VCN-CIDR:
+    type: string
+    required: false
+    default: "10.0.0.0/16"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    description: "VCN CIDR block where you want to create the App/Function resources."
+  
+  Subnet-CIDR:
+    type: string
+    required: false
+    default: "10.0.1.0/24"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    description: "Subnet CIDR block where you want to create the App/Function resources."
+  
+
+## DevOps
+
+  project_description:
+    type: string
+    title: "Project description"
+    description: "Choose DevOps Project description"
+    default: "DevOps Project for Instance Group"
+    required: false    
+
+  project_logging_config_retention_period_in_days:
+    type: number
+    title: "Project Logs retention period"
+    description: "Days to retain logs from the Project."
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
+    default: 30
+    required: true
+    visible: 
+      and:
+        - show_advanced
+  
+  #############
+  # Environment
+  ############# 
+
+  environment_type:
+    type: enum
+    enum:
+      - "COMPUTE_INSTANCE_GROUP"
+    title: "Environment Type"
+    description: "The type of environment to target. Stack currently supports only COMPUTE_INSTANCE_GROUP"
+    default: "COMPUTE_INSTANCE_GROUP"
+    visible: 
+      and:
+        - show_advanced
+
+  availablity_domain_name:
+    type: oci:identity:availabilitydomain:name
+    required: true
+    visibile: true
+    title: "Availability Domain to be chosen"
+    description: "Availability Domain to be chosen"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+
+  ssh_public_key:
+    type: oci:core:ssh:publickey
+    title: "Public SSH Key"
+    description: "Choose public SSH Key to be uploaded into compute instances."
+    required: false
+
+  instance_shape:
+    type: oci:core:instanceshape:name
+    required: false
+    title: "Instance Shape"
+    description: "A shape is a template that determines the number of CPUs, amount of memory, and other resources allocated to a newly created instance."
+    default: "VM.Standard.E3.Flex"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+
+  instance_ocpus:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
+    default: 1
+    title: "Flex Shape OCPUs"
+    description: "Choose number of OCPUs for Flex Shape."
+    visible:
+      and:
+        - or:
+          - eq:
+            - instance_shape 
+            - "VM.Standard.E3.Flex"
+          - eq:
+            - instance_shape 
+            - "VM.Standard.E4.Flex"
+          - eq:
+            - instance_shape 
+            - "VM.Standard.A1.Flex"
+          - eq:
+            - instance_shape 
+            - "VM.Optimized3.Flex"
+
+  instance_shape_config_memory_in_gbs:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
+    default: 10
+    title: "Flex Shape Memory (GB)"
+    description: "Choose number GB for Flex Shape Memory."
+    visible:
+      and:
+        - or:
+          - eq:
+            - instance_shape 
+            - "VM.Standard.E3.Flex"
+          - eq:
+            - instance_shape 
+            - "VM.Standard.E4.Flex"
+          - eq:
+            - instance_shape 
+            - "VM.Standard.A1.Flex"
+          - eq:
+            - instance_shape 
+            - "VM.Optimized3.Flex"
+  
+  instance_os:
+    type: enum
+    required: false
+    title: "Instance OS"
+    description: "An Operating System that determines the operating system for the instance."
+    default: "Oracle Linux"
+    enum:
+      - "Oracle Linux"
+
+  linux_os_version:
+    type: enum
+    required: false
+    title: "Instance OS version"
+    description: "An Operating System version that determines the operating system version for the instance."
+    default: "8"
+    enum:
+      - "8"
+      - "7.9"
+
+  ############
+  # Artifacts
+  ############
+  argument_substitution_mode:
+    type: enum
+    enum:
+      - "NONE"
+    title: "Argument substitution for the Artifact"
+    description: "Artifacts can have arguments that are substituted with values are runtime. Stack currently supports only NONE"
+    default: "NONE"
+  
+  ###########
+  # Pipeline
+  ###########
+  create_dynamic_group_for_devops_pipln_in_compartment:
+    type: boolean
+    title: "Create a Dynamic Group for DevOps Pipelines"
+    description: "You need to be an administrator to do this. Alternatively you can have the administrator create Dynamic group for you." 
+    default: true
+
+  deploy_stage_deploy_stage_type:
+    type: enum
+    enum:
+      - "COMPUTE_INSTANCE_GROUP_ROLLING_DEPLOYMENT"
+    title: "Stage Type"
+    description: "DevOps Stage Type"
+    default: "COMPUTE_INSTANCE_GROUP_ROLLING_DEPLOYMENT"
+
+  deploy_stage_namespace:
+    type: string
+    title: "Namespace to use"
+    description: "namespace to use for deployment."
+    default: "default"
+  

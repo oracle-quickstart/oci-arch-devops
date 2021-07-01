@@ -7,17 +7,29 @@ variable "user_ocid" {}
 variable "fingerprint" {}
 variable "private_key_path" {}
 variable "region" {}
-variable "ssh_public_key" {}
+variable "ssh_public_key" {
+  default = ""
+}
 
+variable "release" {
+  description = "Reference Architecture Release (OCI Architecture Center)"
+  default     = "1.0"
+}
 
-# Specify any variable value's here
+variable "availablity_domain_name" {
+  default = ""
+}
+variable "VCN-CIDR" {
+  default = "10.0.0.0/16"
+}
+
+variable "Subnet-CIDR" {
+  default = "10.0.1.0/24"
+}
 
 variable "instance_shape" {
   description = "Instance Shape"
   default     = "VM.Standard.E3.Flex"
-}
-variable "availability_domain" {
-  default="3"
 }
 
 variable "instance_ocpus" {
@@ -47,11 +59,15 @@ variable "project_logging_config_retention_period_in_days" {
 }
 
 variable "project_description" {
-  default = "devops project"
+  default = "DevOps Project for Instance Group"
 }
 
 variable "argument_substitution_mode" {
   default = "NONE"
+}
+
+variable "environment_type" {
+  default = "COMPUTE_INSTANCE_GROUP"
 }
 
 variable "deploy_stage_namespace" {
@@ -60,4 +76,8 @@ variable "deploy_stage_namespace" {
 
 variable "filename" {
   default = "script.sh"
+}
+
+variable "deploy_stage_deploy_stage_type" {
+  default = "COMPUTE_INSTANCE_GROUP_ROLLING_DEPLOYMENT"
 }
