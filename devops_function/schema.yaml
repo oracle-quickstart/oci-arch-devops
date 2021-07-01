@@ -20,6 +20,10 @@ variableGroups:
   - network_cidrs
   - app_version
   - app_version2
+  - deploy_pipeline_deploy_pipeline_parameters_items_default_value
+  - deploy_pipeline_deploy_pipeline_parameters_items_description
+  - deploy_pipeline_deploy_pipeline_parameters_items_name
+  - compartment_ocid
 
 - title: Required Configuration
   visible: true  
@@ -34,6 +38,8 @@ variableGroups:
   visible: true  
   variables:
   - compartment_id
+  - project_description
+  - project_logging_config_is_archiving_enabled
   - project_logging_config_display_name_prefix
   - project_logging_config_retention_period_in_days
 
@@ -150,10 +156,27 @@ variables:
 
 ## DevOps
 
+  project_description:
+    type: string
+    title: "Project description"
+    description: "Choose DevOps Project description"
+    default: "DevOps Project for Function"
+    required: false    
+
+  project_logging_config_is_archiving_enabled:
+    type: boolean
+    title: "Archiving enabled for Project Logging"
+    description: "Archiving enabled for Project Logging"
+    default: false
+    required: true
+    visible: 
+      and:
+        - show_advanced
+
   project_logging_config_display_name_prefix:
     type: string
     title: "Prefix for Logging Config"
-    description: "Display name for the Log Group"
+    description: "Prefix for Logging Config"
     default: "fn-"
     required: true
     visible: 

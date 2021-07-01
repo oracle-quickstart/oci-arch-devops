@@ -13,6 +13,11 @@ variable "app_name" {
   description = "Application name. Will be used as prefix to identify resources, such as Function, VCN, DevOps, and others"
 }
 
+variable "release" {
+  description = "Reference Architecture Release (OCI Architecture Center)"
+  default     = "1.0"
+}
+
 variable "update_function_with_new_image" {
   default = false
 }

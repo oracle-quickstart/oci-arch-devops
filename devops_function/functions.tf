@@ -5,6 +5,7 @@ resource "oci_functions_application" "test_fn_app" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.app_name}App"
   subnet_ids     = [oci_core_subnet.fnsubnet.id]
+  defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_functions_function" "test_fn" {
@@ -13,5 +14,6 @@ resource "oci_functions_function" "test_fn" {
   display_name   = var.app_name
   image          = "${local.ocir_docker_repository}/${local.ocir_namespace}/${var.ocir_repo_name}/${local.app_name_lower}:${var.app_version}"
   memory_in_mbs  = "256"
+  defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 

@@ -4,6 +4,7 @@
 resource "oci_logging_log_group" "test_log_group" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.app_name}_${random_string.deploy_id.result}_log_group"
+  defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_logging_log" "test_log" {
@@ -23,11 +24,13 @@ resource "oci_logging_log" "test_log" {
 
   is_enabled         = true
   retention_duration = var.project_logging_config_retention_period_in_days
+  defined_tags       = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_ons_notification_topic" "test_notification_topic" {
   compartment_id = var.compartment_ocid
   name           = "${var.app_name}_${random_string.deploy_id.result}_topic"
+  defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_project" "test_project" {
@@ -36,7 +39,8 @@ resource "oci_devops_project" "test_project" {
   notification_config {
     topic_id = oci_ons_notification_topic.test_notification_topic.id
   }
-  description = "${var.app_name}_${random_string.deploy_id.result}_devops_project"
+  description  = "${var.app_name}_${random_string.deploy_id.result}_devops_project"
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deploy_environment" "test_environment" {
@@ -45,6 +49,7 @@ resource "oci_devops_deploy_environment" "test_environment" {
   deploy_environment_type = "FUNCTION"
   project_id              = oci_devops_project.test_project.id
   function_id             = oci_functions_function.test_fn.id
+  defined_tags            = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deploy_artifact" "test_deploy_ocir_artifact" {
@@ -56,6 +61,7 @@ resource "oci_devops_deploy_artifact" "test_deploy_ocir_artifact" {
     deploy_artifact_source_type = var.deploy_artifact_source_type
     image_uri                   = "${local.ocir_docker_repository}/${local.ocir_namespace}/${var.ocir_repo_name}/${local.app_name_lower}:${var.app_version2}"
   }
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
@@ -70,6 +76,7 @@ resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
       description   = var.deploy_pipeline_deploy_pipeline_parameters_items_description
     }
   }
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deploy_stage" "test_deploy_stage" {
@@ -88,6 +95,7 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
   namespace                       = var.deploy_stage_namespace
   function_deploy_environment_id  = oci_devops_deploy_environment.test_environment.id
   docker_image_deploy_artifact_id = oci_devops_deploy_artifact.test_deploy_ocir_artifact.id
+  defined_tags                    = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deployment" "test_deployment" {
@@ -96,4 +104,5 @@ resource "oci_devops_deployment" "test_deployment" {
   deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
   deployment_type    = "PIPELINE_DEPLOYMENT"
   display_name       = "${var.app_name}_${random_string.deploy_id.result}_devops_deployment"
+  defined_tags       = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }

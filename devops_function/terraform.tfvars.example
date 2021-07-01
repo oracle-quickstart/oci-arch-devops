@@ -4,11 +4,15 @@ user_ocid            = "ocid1.user.oc1.."
 fingerprint          = "1c.."
 private_key_path     = "~/.oci/oci_api_key.pem"
 
-# SSH Keys
-ssh_public_key  = "~/.oci/key.pub"
-
 # Region
 region = "us-ashburn-1"
 
 # Compartment
 compartment_ocid = "ocid1.compartment.oc1."
+
+# OCI Registry 
+ocir_user_name         = "identitycloudservice/<username>"
+ocir_user_password     = "baVe(...)L#Z_."
+
+# Set to TRUE if you want to automatically start DevOps Pipeline Deployment.
+update_function_with_new_image = true
