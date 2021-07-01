@@ -21,6 +21,7 @@ variableGroups:
   - private_key_path
   - network_cidrs
   - cluster_options_admission_controller_options_is_pod_security_policy_enabled
+  - release
 
 - title: DevOps Project
   visible: true  

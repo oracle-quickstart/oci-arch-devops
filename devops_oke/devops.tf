@@ -1,36 +1,39 @@
 resource "oci_logging_log_group" "test_log_group" {
   compartment_id = var.compartment_id
   display_name   = "${local.app_name_normalized}_${random_string.deploy_id.result}_log_group"
+  defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_logging_log" "test_log" {
+  #Required
+  display_name = "${local.app_name_normalized}_${random_string.deploy_id.result}_log"
+  log_group_id = oci_logging_log_group.test_log_group.id
+  log_type     = "SERVICE"
+
+  #Optional
+  configuration {
     #Required
-    display_name = "${local.app_name_normalized}_${random_string.deploy_id.result}_log"
-    log_group_id = oci_logging_log_group.test_log_group.id
-    log_type = "SERVICE"
+    source {
+      #Required
+      category    = "all"
+      resource    = oci_devops_project.test_project.id
+      service     = "devops"
+      source_type = "OCISERVICE"
+    }
 
     #Optional
-    configuration {
-        #Required
-        source {
-            #Required
-            category = "all"
-            resource = oci_devops_project.test_project.id
-            service = "devops"
-            source_type = "OCISERVICE"
-        }
+    compartment_id = var.compartment_id
+  }
 
-        #Optional
-        compartment_id = var.compartment_id
-    }
-    
-    is_enabled = true
-    retention_duration = var.project_logging_config_retention_period_in_days
+  is_enabled         = true
+  retention_duration = var.project_logging_config_retention_period_in_days
+  defined_tags       = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_ons_notification_topic" "test_notification_topic" {
   compartment_id = var.compartment_id
   name           = "${local.app_name_normalized}_${random_string.deploy_id.result}_topic"
+  defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_project" "test_project" {
@@ -40,7 +43,7 @@ resource "oci_devops_project" "test_project" {
   #   retention_period_in_days = var.project_logging_config_retention_period_in_days
   # }
 
-  name   = "${local.app_name_normalized}_${random_string.deploy_id.result}"
+  name = "${local.app_name_normalized}_${random_string.deploy_id.result}"
   notification_config {
     #Required
     topic_id = oci_ons_notification_topic.test_notification_topic.id
@@ -50,6 +53,7 @@ resource "oci_devops_project" "test_project" {
   #Optional
   description = var.project_description
   #freeform_tags = var.project_freeform_tags
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deploy_environment" "test_environment" {
@@ -58,9 +62,7 @@ resource "oci_devops_deploy_environment" "test_environment" {
   deploy_environment_type = "OKE_CLUSTER"
   project_id              = oci_devops_project.test_project.id
   cluster_id              = oci_containerengine_cluster.oke_cluster[0].id
-
-  // this should not be required ???
-  //region=var.region
+  defined_tags            = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 #  Add var to choose between an existing Articat and an inline one
@@ -74,7 +76,7 @@ resource "oci_devops_deploy_artifact" "test_deploy_artifact" {
     deploy_artifact_source_type = var.deploy_artifact_source_type #INLINE,GENERIC_ARTIFACT_OCIR
     base64encoded_content       = file("${path.module}/manifest/nginx.yaml")
   }
-
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
@@ -85,18 +87,19 @@ resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
   #Optional
   # defined_tags = {"foo-namespace.bar-key"= "value"}
   # deploy_pipeline_parameters {
-  # 	#Required
-  # 	items {
-  # 		#Required
-  # 		name = var.deploy_pipeline_deploy_pipeline_parameters_items_name
+  #   #Required
+  #   items {
+  #     #Required
+  #     name = var.deploy_pipeline_deploy_pipeline_parameters_items_name
 
-  # 		#Optional
-  # 		default_value = var.deploy_pipeline_deploy_pipeline_parameters_items_default_value
-  # 		description = var.deploy_pipeline_deploy_pipeline_parameters_items_description
-  # 	}
+  #     #Optional
+  #     default_value = var.deploy_pipeline_deploy_pipeline_parameters_items_default_value
+  #     description = var.deploy_pipeline_deploy_pipeline_parameters_items_description
+  #   }
   # }
 
   #freeform_tags = {"bar-key"= "value"}
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_devops_deploy_stage" "test_deploy_stage" {
@@ -118,7 +121,7 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
   kubernetes_manifest_deploy_artifact_ids = [oci_devops_deploy_artifact.test_deploy_artifact.id]
   namespace                               = var.deploy_stage_namespace
   oke_cluster_deploy_environment_id       = oci_devops_deploy_environment.test_environment.id
-
+  defined_tags                            = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 # data "oci_devops_projects" "test_projects" {

@@ -123,7 +123,8 @@ resource "oci_core_security_list" "oke_nodes_security_list" {
     }
   }
 
-  count = var.create_new_oke_cluster ? 1 : 0
+  count        = var.create_new_oke_cluster ? 1 : 0
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_core_security_list" "oke_lb_security_list" {
@@ -131,7 +132,8 @@ resource "oci_core_security_list" "oke_lb_security_list" {
   display_name   = "oke-lb-seclist-${local.app_name_normalized}-${random_string.deploy_id.result}"
   vcn_id         = oci_core_virtual_network.oke_vcn[0].id
 
-  count = var.create_new_oke_cluster ? 1 : 0
+  count        = var.create_new_oke_cluster ? 1 : 0
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_core_security_list" "oke_endpoint_security_list" {
@@ -224,7 +226,8 @@ resource "oci_core_security_list" "oke_endpoint_security_list" {
     }
   }
 
-  count = var.create_new_oke_cluster ? 1 : 0
+  count        = var.create_new_oke_cluster ? 1 : 0
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 locals {
