@@ -30,7 +30,7 @@ resource "oci_artifacts_generic_artifact" "test_generic_artifact" {
 
 resource "oci_logging_log_group" "test_log_group" {
   compartment_id = var.compartment_ocid
-  display_name   = "devops_log_group"
+  display_name   = "devops_log_group_${random_string.deploy_id.result}"
   defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
@@ -64,7 +64,7 @@ resource "oci_logging_log" "test_log" {
 
 resource "oci_ons_notification_topic" "test_notification_topic" {
   compartment_id = var.compartment_ocid
-  name           = "devopstopic"
+  name           = "${random_string.deploy_id.result}_devopstopic"
   defined_tags   = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
@@ -72,7 +72,7 @@ resource "oci_ons_notification_topic" "test_notification_topic" {
 
 resource "oci_devops_project" "test_project" {
   compartment_id = var.compartment_ocid
-  name           = "devopsproject"
+  name           = "devopsproject_${random_string.deploy_id.result}"
 
   notification_config {
     #Required

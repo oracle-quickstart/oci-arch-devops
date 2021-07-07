@@ -4,40 +4,46 @@
 # Create group, user and polcies for devops service
 
 resource "oci_identity_group" "devops" {
-  name           = "devops-group"
+  provider       = oci.home_region
+  name           = "devops-group-${random_id.tag.hex}"
   description    = "group created for devops"
   compartment_id = var.tenancy_ocid
 }
 
 resource "oci_identity_user" "devopsuser" {
-    #Required
-    compartment_id = var.tenancy_ocid
-    description = "user for devops"
-    name = "devops-user"
+  #Required
+  provider       = oci.home_region
+  compartment_id = var.tenancy_ocid
+  description    = "user for devops"
+  name           = "devops-user-${random_id.tag.hex}"
 }
 
 resource "oci_identity_user_group_membership" "usergroupmem1" {
-  depends_on     = [oci_identity_group.devops]
-  group_id       = oci_identity_group.devops.id
-  user_id        = oci_identity_user.devopsuser.id
+  depends_on = [oci_identity_group.devops]
+  provider   = oci.home_region
+  group_id   = oci_identity_group.devops.id
+  user_id    = oci_identity_user.devopsuser.id
 }
 
 resource "oci_identity_dynamic_group" "devopsgroup" {
-  name           = "devopsdyngroup"
+  provider       = oci.home_region
+  name           = "devopsdyngroup-${random_id.tag.hex}"
   description    = "DevOps Pipeline Dynamic Group"
   compartment_id = var.tenancy_ocid
   matching_rule  = "ALL {resource.type = 'devopsdeploypipeline', resource.compartment.id = '${var.compartment_ocid}'}"
 }
 
 resource "oci_identity_dynamic_group" "runcmddynamicgroup" {
-  name           = "run_cmd_dyn_group"
+  provider       = oci.home_region
+  name           = "run_cmd_dyn_group-${random_id.tag.hex}"
   description    = "run_cmd Pipeline Dynamic Group"
   compartment_id = var.tenancy_ocid
   matching_rule  = "ANY {instance.id = '${oci_core_instance.compute_instance.id}'}"
 }
 
 resource "oci_identity_policy" "devopspolicy" {
-  name           = "devops-policies"
+  provider       = oci.home_region
+  name           = "devops-policies-${random_id.tag.hex}"
   description    = "policy created for devops"
   compartment_id = var.compartment_ocid
 
