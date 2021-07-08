@@ -10,7 +10,7 @@ variable "notification_topic_name" {
 }
 
 variable "execute_deployment" {
-  default = true
+  default = false
 }
 
 variable "project_description" {
