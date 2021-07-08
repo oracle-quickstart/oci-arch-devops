@@ -17,7 +17,7 @@ variable "execute_deployment" {
 
 variable "release" {
   description = "Reference Architecture Release (OCI Architecture Center)"
-  default     = "1.0"
+  default     = "1.1"
 }
 
 variable "availablity_domain_name" {
