@@ -1,4 +1,4 @@
-## Copyright © 2020, Oracle and/or its affiliates. 
+## Copyright (c) 2021, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 resource "oci_logging_log_group" "test_log_group" {
@@ -99,7 +99,7 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
 }
 
 resource "oci_devops_deployment" "test_deployment" {
-  count              = var.update_function_with_new_image ? 1 : 0
+  count              = var.execute_deployment ? 1 : 0
   depends_on         = [null_resource.FnPush2OCIR2, oci_devops_deploy_stage.test_deploy_stage]
   deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
   deployment_type    = "PIPELINE_DEPLOYMENT"

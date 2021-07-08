@@ -1,14 +1,18 @@
-## Copyright (c) 2020, Oracle and/or its affiliates.
+## Copyright (c) 2021, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 variable "tenancy_ocid" {}
 variable "compartment_ocid" {}
-variable "user_ocid" {}
-variable "fingerprint" {}
-variable "private_key_path" {}
+#variable "user_ocid" {}
+#variable "fingerprint" {}
+#variable "private_key_path" {}
 variable "region" {}
 variable "ssh_public_key" {
   default = ""
+}
+
+variable "execute_deployment" {
+  default = false
 }
 
 variable "release" {
@@ -59,7 +63,7 @@ variable "project_logging_config_retention_period_in_days" {
 }
 
 variable "project_description" {
-  default = "DevOps Project for Instance Group"
+  default = "DevOps Project for Instance Group deployment"
 }
 
 variable "argument_substitution_mode" {

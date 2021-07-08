@@ -1,4 +1,4 @@
-## Copyright (c) 2020, Oracle and/or its affiliates.
+## Copyright (c) 2021, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 variable "tenancy_ocid" {}
@@ -18,7 +18,7 @@ variable "release" {
   default     = "1.0"
 }
 
-variable "update_function_with_new_image" {
+variable "execute_deployment" {
   default = false
 }
 

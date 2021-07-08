@@ -1,4 +1,4 @@
-## Copyright (c) 2020, Oracle and/or its affiliates.
+## Copyright (c) 2021, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 # Create Artifact Repository
@@ -178,6 +178,7 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
 # Invoke the deployment
 
 resource "oci_devops_deployment" "test_deployment" {
+  count      = var.execute_deployment ? 1 : 0
   depends_on = [oci_devops_deploy_stage.test_deploy_stage]
   #Required
   deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id

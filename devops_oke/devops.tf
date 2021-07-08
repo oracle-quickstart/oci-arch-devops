@@ -84,21 +84,14 @@ resource "oci_devops_deploy_pipeline" "test_deploy_pipeline" {
   project_id   = oci_devops_project.test_project.id
   description  = var.deploy_pipeline_description
   display_name = var.deploy_pipeline_display_name
-  #Optional
-  # defined_tags = {"foo-namespace.bar-key"= "value"}
-  # deploy_pipeline_parameters {
-  #   #Required
-  #   items {
-  #     #Required
-  #     name = var.deploy_pipeline_deploy_pipeline_parameters_items_name
 
-  #     #Optional
-  #     default_value = var.deploy_pipeline_deploy_pipeline_parameters_items_default_value
-  #     description = var.deploy_pipeline_deploy_pipeline_parameters_items_description
-  #   }
-  # }
-
-  #freeform_tags = {"bar-key"= "value"}
+  deploy_pipeline_parameters {
+    items {
+      name          = var.deploy_pipeline_deploy_pipeline_parameters_items_name
+      default_value = var.deploy_pipeline_deploy_pipeline_parameters_items_default_value
+      description   = var.deploy_pipeline_deploy_pipeline_parameters_items_description
+    }
+  }
   defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
@@ -124,12 +117,16 @@ resource "oci_devops_deploy_stage" "test_deploy_stage" {
   defined_tags                            = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
-# data "oci_devops_projects" "test_projects" {
-#   #Required
-#   compartment_id = var.compartment_id
+# Invoke the deployment
 
-#   #Optional
-#   //id    = var.project_id
-#   name  = var.project_name
-#   state = var.project_state
-# }
+resource "oci_devops_deployment" "test_deployment" {
+  count      = var.execute_deployment ? 1 : 0
+  depends_on = [oci_devops_deploy_stage.test_deploy_stage]
+  #Required
+  deploy_pipeline_id = oci_devops_deploy_pipeline.test_deploy_pipeline.id
+  deployment_type    = "PIPELINE_DEPLOYMENT"
+
+  #Optional
+  display_name = "devopsdeployment"
+  defined_tags = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
+}

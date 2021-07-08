@@ -21,6 +21,9 @@ variableGroups:
   - private_key_path
   - network_cidrs
   - cluster_options_admission_controller_options_is_pod_security_policy_enabled
+  - deploy_pipeline_deploy_pipeline_parameters_items_default_value
+  - deploy_pipeline_deploy_pipeline_parameters_items_description
+  - deploy_pipeline_deploy_pipeline_parameters_items_name
   - release
 
 - title: DevOps Project
@@ -28,6 +31,7 @@ variableGroups:
   variables:
     - compartment_id
     - app_name
+    - execute_deployment
     - show_advanced
     - log_group_display_name
     - notification_topic_name
@@ -159,6 +163,13 @@ variables:
     title: "Project Name"
     required: true
 
+  execute_deployment:
+    type: boolean
+    title: "Execute deployment in DevOps Pipeline?"
+    description: "Choose if you want to start deployment in DevOps Pipeline as a part of this Terraform automation."
+    visible: true
+    default: false
+  
   show_advanced:
     type: boolean
     title: "Show advanced options?"
@@ -193,7 +204,7 @@ variables:
     type: string
     title: "DevOps Project Description"
     description: "A short description for the DevOps project"
-    default: "Quick DevOps Project"
+    default: "DevOps Project for OKE deployment"
     required: true
     visible: 
       and:

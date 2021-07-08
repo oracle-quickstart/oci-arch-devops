@@ -1,5 +1,5 @@
 title: "Use OCI DevOps with Instance Group"
-description: "Create Function and DevOps Deploy service to manage your Instance Group deployments."
+description: "Create DevOps Deploy Service to manage your Instance Group deployments."
 schemaVersion: 1.1.0
 version: "20190304"
 locale: "en"
@@ -32,6 +32,7 @@ variableGroups:
   variables:
   - compartment_ocid
   - availablity_domain_name
+  - execute_deployment
   - show_advanced
 
 - title: DevOps Project
@@ -95,6 +96,13 @@ variables:
     visible: true
     default: false
 
+  execute_deployment:
+    type: boolean
+    title: "Execute deployment in DevOps Pipeline?"
+    description: "Choose if you want to start deployment in DevOps Pipeline as a part of this Terraform automation."
+    visible: true
+    default: false
+
 ## Function
 
   VCN-CIDR:
@@ -118,7 +126,7 @@ variables:
     type: string
     title: "Project description"
     description: "Choose DevOps Project description"
-    default: "DevOps Project for Instance Group"
+    default: "DevOps Project for Instance Group deployment"
     required: false    
 
   project_logging_config_retention_period_in_days:

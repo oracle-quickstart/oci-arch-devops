@@ -1,6 +1,6 @@
-# Copyright (c) 2020, 2021 Oracle and/or its affiliates. All rights reserved.
-# Licensed under the Universal Permissive License v 1.0 as shown at http://oss.oracle.com/licenses/upl.
-# 
+## Copyright (c) 2021, Oracle and/or its affiliates.
+## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
+
 
 resource "oci_core_security_list" "oke_nodes_security_list" {
   compartment_id = local.oke_compartment_id

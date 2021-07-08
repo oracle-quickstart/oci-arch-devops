@@ -32,7 +32,7 @@ variableGroups:
   - app_name
   - ocir_user_name
   - ocir_user_password
-  - update_function_with_new_image
+  - execute_deployment
   - show_advanced
 
 - title: DevOps Project
@@ -110,10 +110,10 @@ variables:
     visible: true
     default: false
 
-  update_function_with_new_image:
+  execute_deployment:
     type: boolean
-    title: "Update Function with new image?"
-    description: "Decide if DevOps Service should automatically update Function image (0.0.1) with new image from OCIR (0.0.2)."
+    title: "Execute deployment in DevOps Pipeline?"
+    description: "Choose if you want to start deployment in DevOps Pipeline as a part of this Terraform automation."
     visible: true
     default: false
 
@@ -161,7 +161,7 @@ variables:
     type: string
     title: "Project description"
     description: "Choose DevOps Project description"
-    default: "DevOps Project for Function"
+    default: "DevOps Project for Function deployment"
     required: false    
 
   project_logging_config_is_archiving_enabled:
