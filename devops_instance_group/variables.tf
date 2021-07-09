@@ -85,3 +85,15 @@ variable "filename" {
 variable "deploy_stage_deploy_stage_type" {
   default = "COMPUTE_INSTANCE_GROUP_ROLLING_DEPLOYMENT"
 }
+
+variable "deploy_pipeline_deploy_pipeline_parameters_items_default_value" {
+  default = "defaultValue"
+}
+
+variable "deploy_pipeline_deploy_pipeline_parameters_items_description" {
+  default = "description"
+}
+
+variable "deploy_pipeline_deploy_pipeline_parameters_items_name" {
+  default = "name"
+}
