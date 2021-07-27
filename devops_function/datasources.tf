@@ -47,6 +47,11 @@ data "oci_identity_regions" "oci_regions" {
 
 }
 
+data "oci_objectstorage_namespace" "os_namespace" {
+    compartment_id = var.tenancy_ocid
+}
+
+
 # Randoms
 resource "random_string" "deploy_id" {
   length  = 4
