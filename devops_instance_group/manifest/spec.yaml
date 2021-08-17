@@ -15,4 +15,4 @@ steps:
     name: Install Apache Web Server
     command: ./script.sh
     runAs: root
-    timeoutInSeconds: 600
+    timeoutInSeconds: 800
