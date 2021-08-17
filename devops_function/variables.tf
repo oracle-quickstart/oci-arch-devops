@@ -15,11 +15,12 @@ variable "app_name" {
 
 variable "release" {
   description = "Reference Architecture Release (OCI Architecture Center)"
-  default     = "1.1"
+  default     = "1.11"
 }
 
 variable "execute_deployment" {
-  default = false
+  #  default = false
+  default = true
 }
 
 variable "app_version" {
@@ -49,16 +50,19 @@ variable "ocir_repo_name" {
 }
 
 variable "ocir_user_name" {
-  default = ""
+  sensitive = true
+  default   = ""
 }
 
 variable "ocir_user_password" {
-  default = ""
+  sensitive = true
+  default   = ""
 }
 
 # OCIR repo name & namespace
 
 locals {
   ocir_docker_repository = join("", [lower(lookup(data.oci_identity_regions.oci_regions.regions[0], "key")), ".ocir.io"])
-  ocir_namespace         = lookup(data.oci_identity_tenancy.oci_tenancy, "name")
+  #  ocir_namespace         = lookup(data.oci_identity_tenancy.oci_tenancy, "name")
+  ocir_namespace = lookup(data.oci_objectstorage_namespace.os_namespace, "namespace")
 }

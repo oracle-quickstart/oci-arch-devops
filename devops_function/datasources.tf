@@ -2,6 +2,10 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 # 
 
+data "oci_objectstorage_namespace" "os_namespace" {
+  compartment_id = var.tenancy_ocid
+}
+
 # Gets a list of Availability Domains
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_ocid
