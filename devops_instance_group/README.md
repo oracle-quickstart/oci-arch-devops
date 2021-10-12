@@ -56,7 +56,7 @@ fingerprint          = "<finger_print>"
 private_key_path     = "<pem_private_key_path>"
 
 # SSH Keys
-ssh_public_key  = "<public_ssh_key_path>"
+ssh_private_key  = "<private_ssh_key_path>"
 
 # Region
 region = "<oci_region>"
