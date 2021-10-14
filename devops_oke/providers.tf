@@ -6,7 +6,7 @@ terraform {
   required_providers {
     oci = {
       source  = "hashicorp/oci"
-      version = "4.34.0"
+      version = ">=4.34.0"
     }
     tls = {
       source  = "hashicorp/tls"
