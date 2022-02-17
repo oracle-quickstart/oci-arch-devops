@@ -24,7 +24,7 @@ resource "oci_identity_tag" "ArchitectureCenterTag" {
 
   validator {
     validator_type = "ENUM"
-    values         = ["release", "1.2"]
+    values         = ["release", "1.2.1"]
   }
 
   provisioner "local-exec" {

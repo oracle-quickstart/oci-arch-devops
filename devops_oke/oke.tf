@@ -29,6 +29,7 @@ module "oci-oke" {
   nodepool_subnet_id                                                          = oci_core_subnet.oke_nodes_subnet[0].id
   ssh_public_key                                                              = var.generate_public_ssh_key ? tls_private_key.oke_worker_node_ssh_key.public_key_openssh : var.public_ssh_key
   availability_domain                                                         = data.oci_identity_availability_domains.ADs.availability_domains[0]["name"]
+  defined_tags                                                                = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
 }
 
 resource "oci_identity_compartment" "oke_compartment" {
